@@ -6,17 +6,20 @@ public class EnemyMove : MonoBehaviour
 {
     Rigidbody2D rigid;
     public int nextMove;  //행동지표를 결정할 변수 왼쪽 -1 , 오른쪽 1
-    public float distace;
+    public float distance;
     public GameObject Player;
     public GameObject Enemy;
-    public bool Player_detection = false; 
+
+    //float speed =1.5f; 
+
+    public bool Player_detection = false;
 
     // Start is called before the first frame update
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         nextMove = 1; // 오른쪽 이동
-        
+
     }
 
     // Update is called once per frame
@@ -25,12 +28,6 @@ public class EnemyMove : MonoBehaviour
         if (!gameObject.GetComponent<Enemy>().IsDied())
         {
             //Move
-            distace = Vector2.Distance(Enemy.transform.position, Player.transform.position); //Player와 Enemy의 거리 재기 
-            if (distace < 3.0f)
-            {
-                Player_detection = true;
-                nextMove += 1;
-            }
             rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
 
             //Platform Check
@@ -41,29 +38,61 @@ public class EnemyMove : MonoBehaviour
                                                                                                                 //RayCastHit : Ray에 닿은 오브젝트, GetMask : 레이어 이름에 해당하는 정수값을 리턴하는 함
             if (rayHit.collider == null)
             {
-                Invoke("Wait", 2);
+                //Invoke("Wait", 2);
                 nextMove = nextMove * -1;
 
             }
-        } 
-    }
 
-    private void LateUpdate()
-    {
-        rigid.velocity = new Vector2(0, 0);
-    }
-    private List<int> exclusionList = new List<int>() {0}; //제외할 값
-    void Wait()
-    {
-        nextMove = Random.Range(-1, 1);  //최대값에는 랜덤값포함
+            /*
+                        Debug.DrawRay(frontVec, Vector3.forward, new Color(0, 1, 0));
+                        // DrawRay( ) : 에디터 상에서만 Ray를 그려주는 함수  (위치 , 쏘는 방향 ,레이 컬러(코드에는 녹색적용))
+                        RaycastHit2D rayHi1 = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Platform"));  // (위치 , 쏘는 방향 ,거리(안줘도 됀다) , Layer정보)
+                        if (rayHit.collider == Player)
+                        {
 
-        while (exclusionList.Contains(nextMove))
-        {
-            nextMove = Random.Range(-1, 1);
+                        }
+
+
+
+                        float distance1 = Mathf.Abs(Enemy.transform.position.x - Player.transform.position.x); 
+                        if (distance1 < 3.0f)
+                        {
+                            Player_detection = true;
+
+                            // Enemy가 Player의 반대방향으로 1.5배로 이동
+                            float direction = (Player.transform.position.x > Enemy.transform.position.x) ? 1.0f : -1.0f;
+                            Enemy.transform.position += new Vector3(direction * speed * Time.deltaTime, 0.0f, 0.0f);
+                        }
+                        else
+                        {
+                            Vector3 direction= (Player.transform.position - Enemy.transform.position).normalized;
+                            Enemy.transform.position += direction * speed * Time.deltaTime;
+                        }
+
+
+                    }
+                }
+
+            */
+            /*  private void LateUpdate()
+               {
+                   rigid.velocity = new Vector2(0, 0);
+               }
+               private List<int> exclusionList = new List<int>() {0}; //제외할 값
+               void Wait()
+               {
+                   nextMove = Random.Range(-1, 1);  //최대값에는 랜덤값포함
+
+                   while (exclusionList.Contains(nextMove))
+                   {
+                       nextMove = Random.Range(-1, 1);
+                   }
+
+               }
+
+               */
         }
-
     }
-
-
 }
+
 //기본 움직임
